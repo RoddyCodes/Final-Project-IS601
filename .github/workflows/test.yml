@@ -103,4 +103,5 @@ jobs:
             roddycodes/is601_module14:${{ github.sha }}
           platforms: linux/amd64,linux/arm64
           cache-from: type=registry,roddycodes/is601_module14:cache
-          cache-to: type=inline,mode=max
+          # cache-to: type=inline,mode=max
+          cache-to: type=registry,ref=roddycodes/is601_module14:cache,mode=max
