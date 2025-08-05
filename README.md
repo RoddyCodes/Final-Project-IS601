@@ -53,7 +53,7 @@ python main.py
 - **With Docker**:
 
 ```bash
-docker run -it --rm roddycodes/is601_module13
+docker run -it --rm roddycodes/is601_module14
 ```
 
 ---
@@ -96,13 +96,13 @@ Playwright is used for end-to-end testing.
 
 You can find the published Docker image for this project on Docker Hub:
 
-- [Docker Hub Repository Link](https://hub.docker.com/repository/docker/roddycodes/is601_module13/general)
+- [Docker Hub Repository Link](https://hub.docker.com/repository/docker/roddycodes/is601_module14/general)
 
 ---
 
 # 💻 GitHub Repository
 
-- [GitHub Repository Link](https://github.com/RoddyCodes/module13_is601)
+- [GitHub Repository Link](https://github.com/RoddyCodes/module14_is601)
 
 ---
 
