@@ -1,6 +1,6 @@
 # 🧮 Calculator App – Overview
 
-This is a Calculator web application with JWT-based authentication.
+This is a Calculator web application with JWT-based authentication and others.
 
 ## 🔐 JWT Login & Registration Routes
 
