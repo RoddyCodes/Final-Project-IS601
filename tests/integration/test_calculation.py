@@ -1,5 +1,6 @@
 import pytest
 import uuid
+from uuid import uuid4
 
 from app.models.calculation import (
     Calculation,
@@ -117,14 +118,12 @@ def test_calculation_factory_division():
     assert calc.get_result() == 10, "Incorrect division result."
 
 def test_calculation_factory_invalid_type():
-    """
-    Test that Calculation.create raises a ValueError for an unsupported calculation type.
-    """
     with pytest.raises(ValueError, match="Unsupported calculation type"):
+        # Make sure you're calling the create method with a nonsense type
         Calculation.create(
-            calculation_type='modulus',  # unsupported type
-            user_id=dummy_user_id(),
-            inputs=[10, 3],
+            calculation_type="teleportation",  # Use a guaranteed invalid type
+            user_id=uuid4(),
+            inputs=[1, 2]
         )
 
 def test_invalid_inputs_for_addition():

@@ -1,5 +1,5 @@
 # app/operations.py
-
+import math  # Import math module for mathematical operations
 """
 Module: operations.py
 
@@ -118,3 +118,29 @@ def divide(a: Number, b: Number) -> float:
     # Perform division of a by b and return the result as a float
     result = a / b
     return result
+
+def modulus(a: Number, b: Number) -> Number:
+    """Computes the modulus of two numbers."""
+    if b == 0:
+        raise ValueError("Cannot perform modulus by zero")
+    # 2. Use math.fmod() instead of the % operator
+    return math.fmod(a, b)
+
+def exponentiate(a: Number, b: Number) -> Number:
+    """
+    Raise the first number to the power of the second and return the result.
+
+    Parameters:
+    - a (int or float): The base.
+    - b (int or float): The exponent.
+
+    Returns:
+    - int or float: The result of a raised to the power of b.
+
+    Example:
+    >>> exponentiate(2, 3)
+    8
+    >>> exponentiate(4, 0.5)
+    2.0
+    """
+    return a ** b

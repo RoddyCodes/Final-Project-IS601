@@ -2,7 +2,7 @@
 
 import pytest  # Import the pytest framework for writing and running tests
 from typing import Union  # Import Union for type hinting multiple possible types
-from app.operations import add, subtract, multiply, divide  # Import the calculator functions from the operations module
+from app.operations import add, subtract, multiply, divide, modulus, exponentiate  # Import the calculator functions from the operations module
 
 # Define a type alias for numbers that can be either int or float
 Number = Union[int, float]
@@ -232,3 +232,62 @@ def test_divide_by_zero() -> None:
     # Assert that the exception message contains the expected error message
     assert "Cannot divide by zero!" in str(excinfo.value), \
         f"Expected error message 'Cannot divide by zero!', but got '{excinfo.value}'"
+
+# ---------------------------------------------
+# Unit Tests for the 'modulus' Function
+# ---------------------------------------------
+
+@pytest.mark.parametrize(
+    "a, b, expected",
+    [
+        (7, 3, 1),           # Integer modulus
+        (10.5, 2, 0.5),      # Float modulus
+        (-7, 3, -1),         # Negative integer modulus
+        (7, -3, 1),          # Modulus with negative divisor
+        (0, 5, 0),           # Zero dividend
+    ],
+    ids=[
+        "modulus_two_positive_integers",
+        "modulus_float_and_integer",
+        "modulus_negative_integer",
+        "modulus_negative_divisor",
+        "modulus_zero_dividend",
+    ]
+)
+
+def test_modulus(a: Number, b: Number, expected: Number) -> None:
+    result = modulus(a, b)
+    assert result == expected, f"Expected modulus({a}, {b}) to be {expected}, but got {result}"
+
+def test_modulus_by_zero() -> None:
+    with pytest.raises(ValueError) as excinfo:
+        modulus(5, 0)
+    assert "Cannot perform modulus by zero" in str(excinfo.value)
+
+
+# ---------------------------------------------
+# Unit Tests for the 'exponentiate' Function
+# ---------------------------------------------
+
+@pytest.mark.parametrize(
+    "a, b, expected",
+    [
+        (2, 3, 8),           # Integer exponentiation
+        (4, 0.5, 2.0),       # Square root
+        (5, 0, 1),           # Any number to the power of 0
+        (0, 5, 0),           # Zero to any positive power
+        (-2, 3, -8),         # Negative base, odd exponent
+        (2, -2, 0.25),       # Negative exponent
+    ],
+    ids=[
+        "exponentiate_integers",
+        "exponentiate_square_root",
+        "exponentiate_power_zero",
+        "exponentiate_zero_base",
+        "exponentiate_negative_base",
+        "exponentiate_negative_exponent",
+    ]
+)
+def test_exponentiate(a: Number, b: Number, expected: Number) -> None:
+    result = exponentiate(a, b)
+    assert result == expected, f"Expected exponentiate({a}, {b}) to be {expected}, but got {result}"

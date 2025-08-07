@@ -14,7 +14,7 @@ clear error messages when validation fails.
 
 from enum import Enum
 from pydantic import BaseModel, Field, ConfigDict, model_validator, field_validator
-from typing import List, Optional
+from typing import List, Optional, Literal
 from uuid import UUID
 from datetime import datetime
 
@@ -36,20 +36,22 @@ class CalculationType(str, Enum):
     SUBTRACTION = "subtraction"
     MULTIPLICATION = "multiplication"
     DIVISION = "division"
+    EXPONENTIATE = "exponentiate"
+    MODULUS = "modulus"
 
 class CalculationBase(BaseModel):
     """
     Base schema for calculation data.
     
     This schema defines the common fields that all calculation operations share:
-    - type: The type of calculation (addition, subtraction, etc.)
+    - type: The type of calculation (addition, subtraction, division, etc.)
     - inputs: A list of numeric values to operate on
     
     It also implements validation rules to ensure data integrity.
     """
     type: CalculationType = Field(
         ...,  # The ... means this field is required
-        description="Type of calculation (addition, subtraction, multiplication, division)",
+        description="Type of calculation (addition, subtraction, multiplication, division, exponentiate, modulus)",
         example="addition"
     )
     inputs: List[float] = Field(

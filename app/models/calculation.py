@@ -17,6 +17,7 @@ basic mathematical operations: addition, subtraction, multiplication, and divisi
 from datetime import datetime
 import uuid
 from typing import List
+from app.operations import exponentiate, modulus
 from sqlalchemy import Column, String, DateTime, ForeignKey, JSON, Float
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, declared_attr
@@ -178,6 +179,9 @@ class AbstractCalculation:
             'subtraction': Subtraction,
             'multiplication': Multiplication,
             'division': Division,
+            'modulus': Modulus,              # Added modulus
+            'exponentiate': Exponentiate, # Added exponentiate
+
         }
         calculation_class = calculation_classes.get(calculation_type.lower())
         if not calculation_class:
@@ -353,4 +357,47 @@ class Division(Calculation):
             if value == 0:
                 raise ValueError("Cannot divide by zero.")
             result /= value
+        return result
+
+class Modulus(Calculation):
+    """
+    Modulus calculation subclass.
+    Implements sequential modulus starting from the first number.
+    Examples:
+        [10, 3] -> 10 % 3 = 1
+        [10.5, 2] -> 10.5 % 2 = 0.5
+    """
+    __mapper_args__ = {"polymorphic_identity": "modulus"}
+
+    def get_result(self) -> float:
+        if not isinstance(self.inputs, list):
+            raise ValueError("Inputs must be a list of numbers.")
+        if len(self.inputs) < 2:
+            raise ValueError("Inputs must be a list with at least two numbers.")
+        result = self.inputs[0]
+        for value in self.inputs[1:]:
+            if value == 0:
+                raise ValueError("Cannot perform modulus by zero.")
+            result %= value
+        return result
+    
+
+class Exponentiate(Calculation):
+    """
+    Exponentiate calculation subclass.
+    Implements sequential exponentiation starting from the first number.
+    Examples:
+        [2, 3] -> 2 ** 3 = 8
+        [4, 0.5] -> 4 ** 0.5 = 2.0
+    """
+    __mapper_args__ = {"polymorphic_identity": "exponentiate"}
+
+    def get_result(self) -> float:
+        if not isinstance(self.inputs, list):
+            raise ValueError("Inputs must be a list of numbers.")
+        if len(self.inputs) < 2:
+            raise ValueError("Inputs must be a list with at least two numbers.")
+        result = self.inputs[0]
+        for value in self.inputs[1:]:
+            result **= value
         return result

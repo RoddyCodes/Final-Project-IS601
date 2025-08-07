@@ -229,6 +229,97 @@ def test_create_calculation_division(base_url: str):
     # Expected result: 100 / 2 / 5 = 10
     assert "result" in data and data["result"] == 10, f"Expected result 10, got {data.get('result')}"
 
+# ...existing code...
+
+def test_create_calculation_modulus(base_url: str):
+    user_data = {
+        "first_name": "Calc",
+        "last_name": "Modulus",
+        "email": f"calc.mod{uuid4()}@example.com",
+        "username": f"calc_mod_{uuid4()}",
+        "password": "SecurePass123!",
+        "confirm_password": "SecurePass123!"
+    }
+    token_data = register_and_login(base_url, user_data)
+    access_token = token_data["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+    url = f"{base_url}/calculations"
+    payload = {
+        "type": "modulus",
+        "inputs": [10, 3],
+        "user_id": "ignored"
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    assert response.status_code == 201, f"Modulus calculation creation failed: {response.text}"
+    data = response.json()
+    assert "result" in data and data["result"] == 1, f"Expected result 1, got {data.get('result')}"
+
+    # Test modulus by zero error
+    payload_zero = {
+        "type": "modulus",
+        "inputs": [10, 0],
+        "user_id": "ignored"
+    }
+    response_zero = requests.post(url, json=payload_zero, headers=headers)
+    assert response_zero.status_code == 400, "Expected 400 for modulus by zero"
+
+def test_create_calculation_exponentiate(base_url: str):
+    user_data = {
+        "first_name": "Calc",
+        "last_name": "Exponentiate",
+        "email": f"calc.exp{uuid4()}@example.com",
+        "username": f"calc_exp_{uuid4()}",
+        "password": "SecurePass123!",
+        "confirm_password": "SecurePass123!"
+    }
+    token_data = register_and_login(base_url, user_data)
+    access_token = token_data["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+    url = f"{base_url}/calculations"
+    payload = {
+        "type": "exponentiate",
+        "inputs": [2, 3],
+        "user_id": "ignored"
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    assert response.status_code == 201, f"Exponentiate calculation creation failed: {response.text}"
+    data = response.json()
+    assert "result" in data and data["result"] == 8, f"Expected result 8, got {data.get('result')}"
+
+    # Test exponentiate with float exponent
+    payload_float = {
+        "type": "exponentiate",
+        "inputs": [4, 0.5],
+        "user_id": "ignored"
+    }
+    response_float = requests.post(url, json=payload_float, headers=headers)
+    assert response_float.status_code == 201, f"Exponentiate calculation with float failed: {response_float.text}"
+    data_float = response_float.json()
+    assert "result" in data_float and abs(data_float["result"] - 2.0) < 1e-6, f"Expected result 2.0, got {data_float.get('result')}"
+
+def test_model_modulus():
+    dummy_user_id = uuid4()
+    calc = Calculation.create("modulus", dummy_user_id, [10, 3])
+    result = calc.get_result()
+    assert result == 1, f"Modulus result incorrect: expected 1, got {result}"
+
+    # Test modulus by zero error
+    with pytest.raises(ValueError):
+        calc_zero = Calculation.create("modulus", dummy_user_id, [10, 0])
+        calc_zero.get_result()
+
+def test_model_exponentiate():
+    dummy_user_id = uuid4()
+    calc = Calculation.create("exponentiate", dummy_user_id, [2, 3])
+    result = calc.get_result()
+    assert result == 8, f"Exponentiate result incorrect: expected 8, got {result}"
+
+    # Test exponentiate with float exponent
+    calc_float = Calculation.create("exponentiate", dummy_user_id, [4, 0.5])
+    result_float = calc_float.get_result()
+    assert abs(result_float - 2.0) < 1e-6, f"Exponentiate result incorrect: expected 2.0, got {result_float}"
+
+#
 def test_list_get_update_delete_calculation(base_url: str):
     user_data = {
         "first_name": "Calc",
