@@ -1,11 +1,7 @@
-# tests/unit/test_database.py
-
 import pytest
-from unittest import mock
+from unittest.mock import patch
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.engine import Engine
-from unittest.mock import patch
-
 
 from app.database import get_db, get_engine, get_sessionmaker
 
@@ -31,27 +27,25 @@ def test_get_engine_and_sessionmaker():
     assert isinstance(db, Session)
     db.close()
 
-@mock.patch('app.database.SessionLocal')
-
-def test_get_db_yields_session_and_closes(mock_session_local):
+# The @mock.patch decorator has been removed.
+def test_get_db_yields_session_and_closes():
     """
     Tests that the get_db generator yields a session and then closes it.
     """
     # Get the generator from your function
     db_generator = get_db()
-
-    # The first `next()` call runs the `try` block and yields the session
+    
+    # Run the generator to the `yield` statement to get the session
     session = next(db_generator)
-
+    
     # 1. Assert that the yielded object is a real SQLAlchemy Session
     assert isinstance(session, Session)
-
-    # 2. We mock the `close` method on the specific session object that was yielded
+    
+    # 2. Spy on the .close() method of the specific session that was yielded
     with patch.object(session, 'close') as mock_close:
-
-        # 3. Exhaust the generator to trigger the 'finally' block
+        # 3. Exhaust the generator to trigger the `finally` block
         with pytest.raises(StopIteration):
             next(db_generator)
-
-        # 4. Assert that the mocked `close` method was called exactly once
+        
+        # 4. Assert that the .close() method was called exactly once
         mock_close.assert_called_once()
