@@ -73,7 +73,13 @@ def create_token(
 
     try:
         return jwt.encode(to_encode, secret, algorithm=settings.ALGORITHM)
+    except HTTPException:
+        # If it's already an HTTPException, just re-raise it
+        raise
     except Exception as e:
+        # Re-raise if it's already an HTTPException, otherwise create a 500
+        if isinstance(e, HTTPException):
+            raise
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Could not create token: {str(e)}"
@@ -157,9 +163,13 @@ async def get_current_user(
             
         return user
         
+    except HTTPException:
+        # If it's already an HTTPException, just re-raise it
+        raise
     except Exception as e:
+        # For any other unexpected error, wrap it in a 401
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(e),
+            detail=f"Could not process token: {e}",
             headers={"WWW-Authenticate": "Bearer"},
         )
